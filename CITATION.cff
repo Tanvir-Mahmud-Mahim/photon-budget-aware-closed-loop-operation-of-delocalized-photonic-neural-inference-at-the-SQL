@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite it as below. The accompanying manuscript is not yet published; its citation details will be added on publication."
+title: "PILOT-Q: physics-in-the-loop training and photon-budget-aware closed-loop operation of delocalized photonic neural inference at the standard quantum limit (code)"
+authors:
+  - family-names: Mahim
+    given-names: Tanvir M.
+    affiliation: BRAC University
+  - family-names: Islam
+    given-names: Md Nahin
+    affiliation: University of Memphis
+  - family-names: Rahman
+    given-names: M. Mosaddequr
+    affiliation: BRAC University
+  - family-names: Mohsin
+    given-names: Abu S. M.
+    affiliation: BRAC University
+license: Apache-2.0
+repository-code: "https://github.com/Tanvir-Mahmud-Mahim/photon-budget-aware-closed-loop-operation-of-delocalized-photonic-neural-inference-at-the-SQL"
+type: software
+keywords:
+  - photonic neural networks
+  - shot noise
+  - standard quantum limit
+  - physics-aware training
