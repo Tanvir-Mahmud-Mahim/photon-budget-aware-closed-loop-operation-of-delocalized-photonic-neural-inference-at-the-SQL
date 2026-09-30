@@ -6,9 +6,10 @@ import numpy as np
 from physicsq import model_budget, H_NU_1550
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-RES = os.path.join(HERE, "..", "results", "results.json")
-OUT = os.path.join(HERE, "..", "latex", "numbers.tex")
-TAB = os.path.join(HERE, "..", "latex", "tables.tex")
+# The LaTeX output is written next to results.json (inside the repository).
+RES = os.path.join(HERE, "results", "results.json")
+OUT = os.path.join(HERE, "results", "numbers.tex")
+TAB = os.path.join(HERE, "results", "tables.tex")
 
 DIMS = {"mnist": [(784, 300), (300, 100), (100, 10)],
         "fashion": [(784, 300), (300, 100), (100, 10)],

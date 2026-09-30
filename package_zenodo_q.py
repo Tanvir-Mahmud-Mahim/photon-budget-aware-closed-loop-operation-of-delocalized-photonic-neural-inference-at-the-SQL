@@ -6,8 +6,8 @@ import shutil
 import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-RES = os.path.join(HERE, "..", "results")
-ZEN = os.path.join(HERE, "..", "zenodo")
+RES = os.path.join(HERE, "results")
+ZEN = os.path.join(HERE, "zenodo")
 PKG = os.path.join(ZEN, "pilotq-benchmark-v1")
 
 README = """# PILOT-Q benchmark: photon-budget-aware training and closed-loop
@@ -46,7 +46,7 @@ Creative Commons Attribution 4.0 International (CC BY 4.0).
 INSTRUCTIONS = """ZENODO UPLOAD INSTRUCTIONS (PILOT-Q)
 ====================================
 1. zenodo.org -> New upload -> "Get a DOI now!" (reserve BEFORE publishing).
-2. Paste the DOI into latex/main.tex:  \\newcommand{\\datasetdoi}{10.5281/zenodo.NNNNNNN}
+2. Paste the DOI into the manuscript:  \\newcommand{\\datasetdoi}{10.5281/zenodo.NNNNNNN}
 3. Upload pilotq-benchmark-v1.zip; Resource type: Dataset;
    Title: PILOT-Q benchmark: photon-budget-aware training and closed-loop
    operation of delocalized photonic neural inference at the SQL;

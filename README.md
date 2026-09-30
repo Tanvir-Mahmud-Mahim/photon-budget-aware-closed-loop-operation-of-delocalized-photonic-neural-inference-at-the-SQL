@@ -107,19 +107,25 @@ photon-budget-aware-closed-loop-operation-of-delocalized-photonic-neural-inferen
 `-- package_zenodo_q.py        assembles the data package for Zenodo
 ```
 
-**Important: the scripts read and write folders *next to* the repository
-folder, not inside it.** Every script that reads or writes files builds its
-paths as `<repository folder>/../<name>`. After a run the layout looks like this:
+**All files are read and written inside the repository folder.** No
+script writes outside it. After a run the repository also contains these
+folders, none of which is stored on GitHub (they are listed in
+`.gitignore`):
 
 ```
-your-project-folder/
-|-- photon-budget-aware-closed-loop-...-SQL/   this repository
+photon-budget-aware-closed-loop-...-SQL/
 |-- data/       datasets; you put them here (Section 3)
-|-- results/    results.json and trained models (*.pt), made by run_all_q.py
-|-- figures/    PDF figures, made by fig_schematics_q.py
-|-- latex/      LaTeX output; you must create this folder yourself
+|-- results/    results.json and trained models (*.pt), made by run_all_q.py;
+|               the LaTeX output of make_numbers_q.py and make_supp_q.py
+|-- figures/    PDF figures, made by fig_schematics_q.py and fig_results_q.py
 `-- zenodo/     data package, made by package_zenodo_q.py
 ```
+
+Every script creates the folder it writes to (the LaTeX generators write to
+`results/`, which already holds their input `results.json`); `data/` you
+fill yourself. (Before 30 September 2026 these folders were expected *next to*
+the repository folder, and the LaTeX output went to a folder `latex/` there;
+see [CHANGELOG.md](CHANGELOG.md).)
 
 ---
 
@@ -133,9 +139,30 @@ Matplotlib 3.10, on CPU only.
 pip install -r requirements.txt
 ```
 
-This installs `torch` (version 2.0 or newer), `numpy` (1.24 or newer) and
-`matplotlib` (3.7 or newer). A CPU-only build of PyTorch is enough; the code
-never uses a GPU.
+This installs `torch` (version 2.3 or newer; 2.4.1 or newer on Windows),
+`numpy` (1.24 or newer) and `matplotlib` (3.7 or newer). A CPU-only build of
+PyTorch is enough; the code never uses a GPU.
+
+**Why PyTorch 2.3.** The code itself runs with NumPy 1.24 and with NumPy 2
+(it uses no function that exists in only one of them), and pip may install
+NumPy 2. PyTorch releases before 2.3 were built for NumPy 1 only: with
+NumPy 2, `torch.from_numpy` stops with "Numpy is not available" (checked
+here with PyTorch 2.2.2 and NumPy 2.0.0). On Windows this was fixed only in
+PyTorch 2.4.1. One caution about Matplotlib: releases 3.7.0, 3.7.1 and
+3.7.2 were built for NumPy 1 but do not say so in their package data, so pip
+can install them next to NumPy 2, and then `import matplotlib.pyplot` fails
+(checked here with Matplotlib 3.7.0 and NumPy 2.0.0). Releases 3.7.3 to
+3.8.3 declare `numpy<2`, and 3.8.4 works with NumPy 2. A fresh
+`pip install -r requirements.txt` installs current versions and is not
+affected; if you pin Matplotlib 3.7.0, 3.7.1 or 3.7.2, also pin `numpy<2`.
+
+**Checked with the minimum versions** (30 September 2026, Python 3.11, CPU):
+with torch 2.3.0, numpy 1.24.0 and matplotlib 3.7.0, and again with
+torch 2.3.0, numpy 2.0.0 and matplotlib 3.8.4, `run_all_q.py validate`,
+all dataset loaders, a short training and evaluation run and the five
+output scripts ran (on synthetic stand-in data; see the note under the
+table in Section 5). The three LaTeX files came out identical in the two
+set-ups.
 
 **Extra package for the spoken-digit dataset.** `data.py` reads the FSDD
 sound files with `soundfile`, which is not in `requirements.txt`. Install it
@@ -146,13 +173,13 @@ pip install soundfile
 ```
 
 **Datasets (manual step).** The loaders do **not** download anything. They
-read files from `../data/` (the `data` folder next to the repository):
+read files from `data/` inside the repository folder:
 
 | Dataset | Files the code expects | Source recorded in `data.py` |
 |---|---|---|
-| MNIST (handwritten digits) | `../data/mnist_repo/train-images-idx3-ubyte.gz`, `train-labels-idx1-ubyte.gz`, `t10k-images-idx3-ubyte.gz`, `t10k-labels-idx1-ubyte.gz` | LeCun et al., CC BY-SA 3.0, "GitHub mirror of the canonical distribution" (the mirror is not named) |
-| Fashion-MNIST (clothing images) | the same four file names in `../data/fmnist_repo/data/fashion/` | Xiao et al. 2017, MIT license, official Zalando repository |
-| FSDD, Free Spoken Digit Dataset | `../data/fsdd/recordings/<digit>_<speaker>_<index>.wav` | v1.0.10 (Jackson et al.), CC BY-SA 4.0, official repository; doi:10.5281/zenodo.1342401 |
+| MNIST (handwritten digits) | `data/mnist_repo/train-images-idx3-ubyte.gz`, `train-labels-idx1-ubyte.gz`, `t10k-images-idx3-ubyte.gz`, `t10k-labels-idx1-ubyte.gz` | LeCun et al., CC BY-SA 3.0, "GitHub mirror of the canonical distribution" (the mirror is not named) |
+| Fashion-MNIST (clothing images) | the same four file names in `data/fmnist_repo/data/fashion/` | Xiao et al. 2017, MIT license, official Zalando repository |
+| FSDD, Free Spoken Digit Dataset | `data/fsdd/recordings/<digit>_<speaker>_<index>.wav` | v1.0.10 (Jackson et al.), CC BY-SA 4.0, official repository; doi:10.5281/zenodo.1342401 |
 
 The Fashion-MNIST path matches the folder layout of
 https://github.com/zalandoresearch/fashion-mnist (`data/fashion/`), and the
@@ -178,7 +205,7 @@ python3 run_all_q.py validate
 ```
 
 This compares the simulated shot noise with the exact formula (Section 9) and
-writes the result to `../results/results.json`. It needs no datasets. It
+writes the result to `results/results.json`. It needs no datasets. It
 prints `== Twin validation vs analytic SQL ==` and a total time.
 
 To draw the architecture schematic, which needs no results (2 to 5 seconds):
@@ -187,7 +214,7 @@ To draw the architecture schematic, which needs no results (2 to 5 seconds):
 python3 fig_schematics_q.py
 ```
 
-This writes `../figures/fig_architecture_q.pdf` and prints
+This writes `figures/fig_architecture_q.pdf` and prints
 `fig_architecture_q done`. If `results.json` exists but holds only the twin
 check, it also prints `abstract deferred: 'mnist'`: the overview figure is
 skipped until the dataset results exist. This is expected.
@@ -197,18 +224,19 @@ skipped until the dataset results exist. This is expected.
 This needs a complete `results.json` (and, to skip training, the trained
 models `*.pt`), such as the contents of the data package made by
 `package_zenodo_q.py` (`pilotq-benchmark-v1/results.json` and
-`pilotq-benchmark-v1/checkpoints/*.pt`). This path was not tested while
-writing this guide, because no such package is stored in the repository.
+`pilotq-benchmark-v1/checkpoints/*.pt`). No such package is stored in the
+repository, so this path could not be tested with the real results (see the
+note under the table in Section 5).
 
-1. Copy `results.json` (and the `.pt` files) into `../results/`.
-2. Create the output folder for LaTeX: `mkdir ../latex`
-3. Run:
+1. Copy `results.json` (and the `.pt` files) into `results/` (create the
+   folder if needed).
+2. Run:
 
 ```
-python3 fig_schematics_q.py     # schematics; also creates ../figures/
-python3 fig_results_q.py        # result figures (needs ../figures/ to exist)
-python3 make_numbers_q.py       # ../latex/numbers.tex and ../latex/tables.tex
-python3 make_supp_q.py          # ../latex/supp_tables.tex
+python3 fig_schematics_q.py     # schematics -> figures/
+python3 fig_results_q.py        # result figures -> figures/
+python3 make_numbers_q.py       # results/numbers.tex and results/tables.tex
+python3 make_supp_q.py          # results/supp_tables.tex
 ```
 
 If the `.pt` files are present, `python3 run_all_q.py all` skips all
@@ -218,7 +246,7 @@ slightly different values on every run; see Section 10).
 
 ### Way C: recompute everything from scratch (long)
 
-Put the datasets in `../data/` (Section 3), install `soundfile`, then:
+Put the datasets in `data/` (Section 3), install `soundfile`, then:
 
 ```
 python3 run_all_q.py all
@@ -237,7 +265,7 @@ commands of Way B.
 ## 5. The scripts, step by step
 
 `run_all_q.py` takes one stage name (default `all`). Every stage adds its
-results to `../results/results.json`, keeping what is already there. If a
+results to `results/results.json`, keeping what is already there. If a
 trained model file already exists, it is loaded instead of retrained.
 
 | Step | Command | What it does | Time* | Results |
@@ -248,16 +276,29 @@ trained model file already exists, it is loaded instead of retrained.
 | 4 | `python3 run_all_q.py fsdd` | Same for spoken digits (100 / 140 / 140 epochs); needs `soundfile` | long (not re-timed) | `fsdd_*.pt`; `fsdd` in `results.json` |
 | 5 | `python3 run_all_q.py ablation` | Trains one extra MNIST network at a single fixed budget of 1 photon/MAC (35 epochs) and measures its accuracy curve | long (not re-timed) | `mnist_pitlq_fixed1.pt`; `mnist/pitlq_fixed1` in `results.json` |
 | - | `python3 run_all_q.py all` | Steps 1 to 5 in this order | long (not re-timed) | all of the above |
-| 6 | `python3 make_numbers_q.py` | Writes every number quoted in the manuscript as a LaTeX command, plus the two main tables | not run here** | `../latex/numbers.tex`, `../latex/tables.tex` |
-| 7 | `python3 make_supp_q.py` | Writes the supplementary tables | not run here** | `../latex/supp_tables.tex` |
-| 8 | `python3 fig_schematics_q.py` | Draws the architecture schematic; also the overview figure if `results.json` exists | 2 to 5 s (schematic only) | `../figures/fig_architecture_q.pdf`, `../figures/fig_abstract_q.pdf` |
-| 9 | `python3 fig_results_q.py` | Draws the five result figures | not run here** | `../figures/fig_*_q.pdf` (Section 6) |
-| 10 | `python3 package_zenodo_q.py` | Copies `results.json` and all `.pt` files, exports four CSV tables, writes a README and upload instructions, and zips everything | not run here** | `../zenodo/pilotq-benchmark-v1/`, `../zenodo/pilotq-benchmark-v1.zip`, `../zenodo/INSTRUCTIONS.md` |
+| 6 | `python3 make_numbers_q.py` | Writes every number quoted in the manuscript as a LaTeX command, plus the two main tables | not run here** | `results/numbers.tex`, `results/tables.tex` |
+| 7 | `python3 make_supp_q.py` | Writes the supplementary tables | not run here** | `results/supp_tables.tex` |
+| 8 | `python3 fig_schematics_q.py` | Draws the architecture schematic; also the overview figure if `results.json` exists | 2 to 5 s (schematic only) | `figures/fig_architecture_q.pdf`, `figures/fig_abstract_q.pdf` |
+| 9 | `python3 fig_results_q.py` | Draws the five result figures | not run here** | `figures/fig_*_q.pdf` (Section 6) |
+| 10 | `python3 package_zenodo_q.py` | Copies `results.json` and all `.pt` files, exports four CSV tables, writes a README and upload instructions, and zips everything | not run here** | `zenodo/pilotq-benchmark-v1/`, `zenodo/pilotq-benchmark-v1.zip`, `zenodo/INSTRUCTIONS.md` |
 
 \*Measured on a shared 2-core machine.
 \*\*These steps need the complete `results.json` from steps 1 to 5, which is
 not stored in the repository. Without it they stop with "No such file or
-directory".
+directory". On 30 September 2026 they were run on a `results.json` and
+model files made by `run_all_q.py all` from synthetic stand-in datasets
+(random images and tones in the expected file formats) with training cut to
+2 epochs, only to check that they run and where they write; the numbers in
+those files mean nothing. `make_numbers_q.py`, `make_supp_q.py`,
+`fig_schematics_q.py` and `package_zenodo_q.py` finished.
+`fig_results_q.py` drew four of the five result figures and then stopped in
+the last one (`fig_sota_q.pdf`) with `ValueError: min() arg is an empty
+sequence`, because in the stand-in results no closed-loop point reaches the
+target accuracy; the previous version of the script stops at the same
+point with the same input. Every file written was identical to the file
+the previous version (with the folders next to the repository) wrote from
+the same input (PDFs written with a fixed timestamp, `SOURCE_DATE_EPOCH=0`;
+the zip archive compared file by file).
 
 All training uses the fixed seed 42 and all evaluations use the fixed seeds
 101, 202, 303, 404 and 505. PyTorch is limited to 2 threads (`trainq.py`).
@@ -420,11 +461,14 @@ The training scripts print loss and training accuracy every 5 epochs, and
   505) set their random seeds. The twin check in `validate_ip_rmse` seeds
   only the random inputs and weights, not the noise draws, so its simulated
   error column differs slightly on every run.
-- **Paths.** `data.py`, `run_all_q.py` and all generators use folders next to
-  the repository (`../data`, `../results`, `../figures`, `../latex`,
-  `../zenodo`), as shown in Section 2. `fig_results_q.py` does not create
-  `../figures/`, and `make_numbers_q.py` / `make_supp_q.py` do not create
-  `../latex/`.
+- **Paths.** `data.py`, `run_all_q.py` and all generators use folders inside
+  the repository (`data/`, `results/`, `figures/`, `zenodo/`), as shown in
+  Section 2. The LaTeX output goes to `results/`, next to `results.json`.
+- **Upload instructions.** The `INSTRUCTIONS.md` text written by
+  `package_zenodo_q.py` (next to the zip, not inside it) says to paste the
+  dataset DOI into the manuscript's `\datasetdoi` macro and to recompile the
+  manuscript. The manuscript is not part of this repository; no script reads
+  or writes it.
 
 ---
 
@@ -435,6 +479,7 @@ are listed in [CHANGELOG.md](CHANGELOG.md).
 
 | Date | Change |
 |---|---|
+| 30 Sep 2026 | Fixes: all folders moved inside the repository (LaTeX output to `results/`); PyTorch minimum raised to 2.3 |
 | 30 Sep 2026 | Documentation rewritten (this guide, CHANGELOG, CITATION.cff); code unchanged |
 | 1 Aug 2026 | Supplementary material added, then replaced by an updated copy |
 | 25 Jul 2026 | Code base and shared figure toolchain added |

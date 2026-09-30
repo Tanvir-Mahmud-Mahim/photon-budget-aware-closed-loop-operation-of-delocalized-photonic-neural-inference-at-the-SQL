@@ -13,7 +13,7 @@ from experimentsq import (acc_vs_nbar, impairment_sweeps, closed_loop,
                           oracle_bound, NBAR_GRID, IMPAIRED)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-RES = os.path.join(HERE, "..", "results")
+RES = os.path.join(HERE, "results")
 os.makedirs(RES, exist_ok=True)
 RESULTS_PATH = os.path.join(RES, "results.json")
 

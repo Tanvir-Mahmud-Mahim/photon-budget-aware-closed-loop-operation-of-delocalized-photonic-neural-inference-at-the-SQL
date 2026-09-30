@@ -15,7 +15,7 @@ import gzip
 import os
 import numpy as np
 
-ROOT = os.path.join(os.path.dirname(__file__), "..", "data")
+ROOT = os.path.join(os.path.dirname(__file__), "data")
 
 
 def _load_idx(path):

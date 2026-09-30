@@ -4,8 +4,9 @@ import os
 from physicsq import model_budget, H_NU_1550
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-RES = os.path.join(HERE, "..", "results", "results.json")
-OUT = os.path.join(HERE, "..", "latex", "supp_tables.tex")
+# The LaTeX output is written next to results.json (inside the repository).
+RES = os.path.join(HERE, "results", "results.json")
+OUT = os.path.join(HERE, "results", "supp_tables.tex")
 
 DS_TITLE = {"mnist": "MNIST", "fashion": "Fashion-MNIST", "fsdd": "FSDD"}
 MODE_TITLE = {"digital": "conventional", "pitlq": "PILOT-Q",

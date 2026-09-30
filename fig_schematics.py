@@ -17,7 +17,7 @@ from figstyle import C
 
 fs.use_style()
 HERE = os.path.dirname(os.path.abspath(__file__))
-FIG = os.path.join(HERE, "..", "figures")
+FIG = os.path.join(HERE, "figures")
 os.makedirs(FIG, exist_ok=True)
 
 TINT = {"blue": "#eaf2fc", "aqua": "#e6f7f0", "yellow": "#fdf3dd",

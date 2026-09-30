@@ -12,8 +12,9 @@ from physicsq import model_budget, H_NU_1550, E_ADC, E_DIG
 
 fs.use_style()
 HERE = os.path.dirname(os.path.abspath(__file__))
-FIG = os.path.join(HERE, "..", "figures")
-RES = os.path.join(HERE, "..", "results", "results.json")
+FIG = os.path.join(HERE, "figures")
+os.makedirs(FIG, exist_ok=True)
+RES = os.path.join(HERE, "results", "results.json")
 
 MODE_STYLE = {
     "digital":    dict(color=C["muted"], marker="o", label="conventional (digital) training"),

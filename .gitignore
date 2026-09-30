@@ -1,4 +1,7 @@
 __pycache__/
 *.pyc
+# generated or downloaded inside the repository; not committed
 data/
-results/*.pt
+results/
+figures/
+zenodo/

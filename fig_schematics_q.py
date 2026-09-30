@@ -16,8 +16,8 @@ import fig_schematics as B          # helpers: card/stage/chip/arrow/... + AUTOF
 
 fs.use_style()
 HERE = os.path.dirname(os.path.abspath(__file__))
-FIG = os.path.join(HERE, "..", "figures")
-RES = os.path.join(HERE, "..", "results", "results.json")
+FIG = os.path.join(HERE, "figures")
+RES = os.path.join(HERE, "results", "results.json")
 os.makedirs(FIG, exist_ok=True)
 TINT, EDGE = B.TINT, B.EDGE
 
